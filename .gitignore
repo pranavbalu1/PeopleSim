@@ -1,0 +1,38 @@
+# Python-related
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.py[cod]
+*.env
+
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# IDE and Editor-specific files
+.vscode/
+.idea/
+*.suo
+*.swp
+*.swo
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+
+# Data files
+data/
+
+# Streamlit configuration
+*.streamlit/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# CSV files from simulation results (optional)
+data/simulation_results.csv
