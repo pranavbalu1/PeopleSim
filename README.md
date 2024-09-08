@@ -26,7 +26,7 @@ The project directory contains the following components:
 - **config/**
   - `config.py` : Contains configuration settings for the simulation.
 
-- **visualization.py** : Streamlit application for visualizing simulation data.
+- **visualization/app.py** : Streamlit application for visualizing simulation data.
 
 - **main.py** : The entry point for running the simulation.
 
