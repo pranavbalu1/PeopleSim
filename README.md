@@ -1,6 +1,3 @@
-Certainly! Here's the revised `README.md` file from step 2:
-
-
 # Population Simulation Project
 
 ## Overview
