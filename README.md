@@ -103,7 +103,7 @@ To set up and run this project, follow these steps:
    - Run the Streamlit app:
 
      ```bash
-     streamlit run visualization.py
+     streamlit run visualization/app.py
      ```
 
    - Open the provided URL in your web browser to view trends and specific agent data.
