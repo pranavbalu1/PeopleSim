@@ -1,76 +1,74 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 
-def load_simulation_data(num_steps=None):
-    data = pd.read_csv('simulation_results.csv')
-    if num_steps:
-        data = data[data['Step'] <= num_steps]
+# Function to load simulation data
+def load_simulation_data():
+    # Load data from CSV file
+    try:
+        data = pd.read_csv('simulation_results.csv')
+    except FileNotFoundError:
+        st.error("Simulation results file not found. Please run the simulation first.")
+        return pd.DataFrame()
     return data
 
 def main():
     st.title('Population Simulation Dashboard')
 
-    # Add a slider to control the number of steps
-    num_steps = st.slider('Number of Steps', min_value=10, max_value=100, value=50)
-
-    # Load data based on the number of steps
-    data = load_simulation_data(num_steps)
-
+    # Load data
+    data = load_simulation_data()
+    if data.empty:
+        return
+    
+    # Display simulation data
     st.write("## Simulation Data")
     st.write(data)
-
-    # Add agent selection
+    
+    # Display job distribution
+    st.write("## Job Distribution")
+    job_distribution = data['Job'].value_counts()
+    st.bar_chart(job_distribution)
+    
+    # Display income over time
+    st.write("## Income Over Time")
+    income_over_time = data.groupby('Step')['Income'].mean()
+    fig, ax = plt.subplots()
+    ax.plot(income_over_time.index, income_over_time.values, marker='o', label='Average Income')
+    ax.set_xlabel('Steps')
+    ax.set_ylabel('Income')
+    ax.set_title('Income Over Time')
+    ax.legend()
+    st.pyplot(fig)
+    
+    # Display savings over time
+    st.write("## Savings Over Time")
+    savings_over_time = data.groupby('Step')['Savings'].mean()
+    fig, ax = plt.subplots()
+    ax.plot(savings_over_time.index, savings_over_time.values, marker='o', color='orange', label='Average Savings')
+    ax.set_xlabel('Steps')
+    ax.set_ylabel('Savings')
+    ax.set_title('Savings Over Time')
+    ax.legend()
+    st.pyplot(fig)
+    
+    # Display agent-specific data
+    st.write("## Agent-Specific Data")
     agent_ids = data['AgentID'].unique()
-    selected_agent = st.selectbox('Select Agent ID', options=agent_ids)
-
-    # Filter data for the selected agent
-    agent_data = data[data['AgentID'] == selected_agent]
-
-    st.write(f"## Data for Agent {selected_agent}")
+    selected_agent = st.selectbox('Select Agent ID', options=['All'] + list(agent_ids))
+    
+    if selected_agent == 'All':
+        agent_data = data
+    else:
+        agent_data = data[data['AgentID'] == int(selected_agent)]
+    
+    st.write(f"Showing data for agent {selected_agent}")
     st.write(agent_data)
-
-    # Income Over Time for Selected Agent
-    st.write(f"## Income Over Time for Agent {selected_agent}")
-    fig, ax = plt.subplots()
-    ax.plot(agent_data['Step'], agent_data['Income'], marker='o', label='Income')
-    ax.set_xlabel('Steps')
-    ax.set_ylabel('Income')
-    ax.set_title(f'Income Over Time for Agent {selected_agent}')
-    ax.legend()
-    st.pyplot(fig)
-
-    # Savings Over Time for Selected Agent
-    st.write(f"## Savings Over Time for Agent {selected_agent}")
-    fig, ax = plt.subplots()
-    ax.plot(agent_data['Step'], agent_data['Savings'], marker='o', color='orange', label='Savings')
-    ax.set_xlabel('Steps')
-    ax.set_ylabel('Savings')
-    ax.set_title(f'Savings Over Time for Agent {selected_agent}')
-    ax.legend()
-    st.pyplot(fig)
-
-    # General Trends for All Agents
-    st.write("## General Trends for All Agents")
-
-    # Income Over Time
-    fig, ax = plt.subplots()
-    ax.plot(data['Step'], data['Income'], marker='o', label='Income')
-    ax.set_xlabel('Steps')
-    ax.set_ylabel('Income')
-    ax.set_title('Income Over Time for All Agents')
-    ax.legend()
-    st.pyplot(fig)
-
-    # Savings Over Time
-    fig, ax = plt.subplots()
-    ax.plot(data['Step'], data['Savings'], marker='o', color='orange', label='Savings')
-    ax.set_xlabel('Steps')
-    ax.set_ylabel('Savings')
-    ax.set_title('Savings Over Time for All Agents')
-    ax.legend()
-    st.pyplot(fig)
+    
+    # Display agent-specific job distribution
+    st.write("## Agent-Specific Job Distribution")
+    if not agent_data.empty:
+        job_distribution = agent_data['Job'].value_counts()
+        st.bar_chart(job_distribution)
 
 if __name__ == '__main__':
     main()
